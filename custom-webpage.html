@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en us">
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Cloud computing</title>
+</head>
+<body>
+<div class="glass-rectangle">
+    <p class="large-text">Cloud computing</p>
+    <p class="small-text">Laboratory work #1</p>
+    <!-- Додано контейнер для відображення користувачів -->
+    <div id="users-container"></div>
+    <div id="server-info-container"></div>
+</div>
+
+<script>
+    // Функція для завантаження даних про користувачів
+    async function loadUsers() {
+        try {
+            const response = await fetch('http://localhost:2100/users');
+            if (!response.ok) {
+                throw new Error('Server response was not ok');
+            }
+            const users = await response.json();
+
+            const usersContainer = document.getElementById('users-container');
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.innerHTML = `
+                    <p><strong>${user.first_name} ${user.last_name}</strong> (${user.position}) - Salary: $${user.salary}</p>
+                `;
+                usersContainer.appendChild(userElement);
+            });
+        } catch (error) {
+            console.error('Failed to load users:', error);
+        }
+    }
+
+    async function loadServerInfo() {
+        try {
+            const response = await fetch('http://localhost:2100/api/server-info');
+            if (!response.ok) {
+                throw new Error('Server response was not ok');
+            }
+            const serverInfo = await response.json();
+
+            const serverInfoContainer = document.getElementById('server-info-container');
+            // Assuming serverInfo contains an 'ip' field with the IP address
+            serverInfoContainer.innerHTML = `<p>Server IP: ${serverInfo.ip}</p>`;
+        } catch (error) {
+            console.error('Failed to load server info:', error);
+        }
+    }
+
+
+    // Викликаємо функцію при завантаженні сторінки
+    window.onload = () => {
+        loadUsers();
+        loadServerInfo(); // New call to load server info
+    };
+</script>
+</body>
+</html>
